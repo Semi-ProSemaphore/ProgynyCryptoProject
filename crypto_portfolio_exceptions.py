@@ -1,0 +1,3 @@
+class InsufficientFundsError(Exception):
+    pass
+
