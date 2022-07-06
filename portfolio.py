@@ -1,31 +1,39 @@
-from crypto_definitions import Coin
+from schema_objects import Coin
 from crypto_portfolio_exceptions import InsufficientFundsError
 from typing import List
 
 import crypto_api
+import database_api
 
 
 class Portfolio:
     EXAMPLE_STARTING_BALANCE = 1.00e6
 
-    def __init__(self, portfolio_id: int = 0):
-        pass
+    def __init__(self, portfolio_id: int = None):
+        self.db = database_api.Database()
+        if portfolio_id:
+            self.portfolio = self.db.get_portfolio(portfolio_id)
+        else:
+            self.portfolio = self.db.create_portfolio(self.EXAMPLE_STARTING_BALANCE)
 
     '''
     Crypto api's call gives us coins in order of market cap. If that changes, so should this function.
     '''
-    @staticmethod
-    def _get_top_coins(how_many: int = 3) -> List[Coin]:
+    def _get_top_coins(self, how_many: int = 3) -> List[Coin]:
         coins = crypto_api.get_coins()
         how_many = len(coins) if how_many > len(coins) else how_many
         coins = coins[:how_many]
 
-        return [Coin(id=coin["id"],
-                     symbol=coin["symbol"],
-                     name=coin["name"],
-                     current_price=coin["current_price"],
-                     date=coin["date"])
-                for coin in coins]
+        top_coins = []
+        for coin in coins:
+            coin_obj = Coin(id=coin["id"],
+                            symbol=coin["symbol"],
+                            name=coin["name"],
+                            current_price=coin["current_price"],
+                            date=coin["date"])
+            self.db.add_coin_history(coin_obj)
+            top_coins.append(coin_obj)
+        return top_coins
 
     @staticmethod
     def _should_trade(coin: Coin, coin_avg: float) -> bool:
@@ -49,8 +57,12 @@ class Portfolio:
 
         return coin_avg
 
-    def make_trade(self, coin: Coin) -> None:
-        pass
+    def make_trade(self, coin: Coin, quantity: int = 1) -> None:
+        if self.portfolio.cash_balance >= coin.current_price * quantity:
+            # NOTE: These three calls should eventually be transactional.
+            crypto_api.submit_order(coin.id, quantity, coin.current_price)
+            self.portfolio = self.db.update_portfolio(coin.current_price)
+            self.db.update_portfolio_holdings(self.portfolio.id, coin.id, quantity)
 
     def make_trade_decision(self) -> None:
         coins = self._get_top_coins()
@@ -62,4 +74,4 @@ class Portfolio:
                 try:
                     self.make_trade(coin)
                 except InsufficientFundsError:
-                    pass
+                    pass  # Try to trade the next coin on the list.
