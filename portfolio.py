@@ -11,7 +11,9 @@ class Portfolio:
 
     def __init__(self, portfolio_id: int = None):
         self.db = database_api.Database()
-        if portfolio_id:
+        # NOTE: Quick note here, if request comes for id that doesn't exist, will go to else
+        #       and automatically create portfolio w/ next available id. We can discuss.
+        if portfolio_id and self.db.is_existing_portfolio(portfolio_id):
             self.portfolio = self.db.get_portfolio(portfolio_id)
         else:
             self.portfolio = self.db.create_portfolio(self.EXAMPLE_STARTING_BALANCE)
