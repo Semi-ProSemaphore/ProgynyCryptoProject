@@ -63,7 +63,7 @@ class Portfolio:
         if self.portfolio.cash_balance >= coin.current_price * quantity:
             # NOTE: These three calls should eventually be transactional.
             crypto_api.submit_order(coin.id, quantity, coin.current_price)
-            self.portfolio = self.db.update_portfolio(coin.current_price)
+            self.portfolio = self.db.update_portfolio(self.portfolio.id, coin.current_price)
             self.db.update_portfolio_holdings(self.portfolio.id, coin.id, quantity)
 
     def make_trade_decision(self) -> None:
