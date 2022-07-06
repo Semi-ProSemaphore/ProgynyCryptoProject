@@ -6,6 +6,9 @@ class Database:
     def __init__(self):
         pass
 
+    def is_existing_portfolio(self, portfolio_id: int) -> bool:
+        pass
+
     def get_portfolio(self, portfolio_id: int) -> Portfolio:
         pass
 
