@@ -1,0 +1,6 @@
+CREATE TABLE HistoricalCoinData
+(
+    ID INT FOREIGN KEY REFERENCES Coin(ID),
+    CURRENT_PRICE FLOAT,
+    'DATE' DATE
+);
