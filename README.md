@@ -4,6 +4,12 @@ Welcome to Progyny's Engineering technical assessment challenge! Please read the
 
 ## Instructions
 
+# Instructions for running code given here.
+
+1. Spin up Docker as per original "(sudo) make init".
+2. Enter Python console.
+3. Import app.py, and run the "run_app()" function.
+
 ### Overview
 
 Cryptocurrencies are on the rise, and we want to get in on the action. Let's build a bot that watches the prices of certain coins and their prices, and places trades for us when they hit certain levels. 

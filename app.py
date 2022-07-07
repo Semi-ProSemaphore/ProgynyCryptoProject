@@ -1,11 +1,10 @@
 """Crypto Interview Assessment Module."""
 
 import os
-
+import time
 from dotenv import find_dotenv, load_dotenv
+from portfolio import Portfolio
 
-
-import crypto_api
 
 load_dotenv(find_dotenv(raise_error_if_not_found=True))
 
@@ -13,3 +12,14 @@ load_dotenv(find_dotenv(raise_error_if_not_found=True))
 # os.getenv("DB_HOST")
 
 # Start Here
+
+
+class App:
+
+    @staticmethod
+    def run_app():
+        portfolio = Portfolio()
+
+        while True:
+            portfolio.make_trade_decision()
+            time.sleep(60)
