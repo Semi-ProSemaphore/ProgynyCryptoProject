@@ -33,6 +33,8 @@ class Portfolio:
                             name=coin["name"],
                             current_price=coin["current_price"],
                             date=coin["date"])
+            if not self.db.is_existing_coin(coin_obj):
+                self.db.create_coin(coin_obj)
             self.db.add_coin_history(coin_obj)
             top_coins.append(coin_obj)
         return top_coins
@@ -64,7 +66,10 @@ class Portfolio:
             # NOTE: These three calls should eventually be transactional.
             crypto_api.submit_order(coin.id, quantity, coin.current_price)
             self.portfolio = self.db.update_portfolio(self.portfolio.id, coin.current_price)
-            self.db.update_portfolio_holdings(self.portfolio.id, coin.id, quantity)
+            if self.db.is_coin_in_portfolio_holdings(self.portfolio.id, coin.id):
+                self.db.update_portfolio_holdings(self.portfolio.id, coin.id, quantity)
+            else:
+                self.db.add_to_portfolio_holdings(self.portfolio.id, coin.id, quantity)
 
     def make_trade_decision(self) -> None:
         coins = self._get_top_coins()
