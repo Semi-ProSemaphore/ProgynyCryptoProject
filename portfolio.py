@@ -4,13 +4,16 @@ from typing import List
 
 import crypto_api
 import database_api
+import logging
 
 
 class Portfolio:
     EXAMPLE_STARTING_BALANCE = 1.00e6
 
     def __init__(self, portfolio_id: int = None):
+        logging.basicConfig(filename='./storage/logs/app.log', level=logging.INFO)
         self.db = database_api.Database()
+
         # NOTE: Quick note here, if request comes for id that doesn't exist, will go to else
         #       and automatically create portfolio w/ next available id. We can discuss.
         if portfolio_id and self.db.is_existing_portfolio(portfolio_id):
@@ -32,10 +35,11 @@ class Portfolio:
                             symbol=coin["symbol"],
                             name=coin["name"],
                             current_price=coin["current_price"],
-                            date=coin["date"])
+                            date=coin["last_updated"])
             if not self.db.is_existing_coin(coin_obj):
                 self.db.create_coin(coin_obj)
             self.db.add_coin_history(coin_obj)
+            self.db.update_coin(coin_obj)
             top_coins.append(coin_obj)
         return top_coins
 
@@ -70,6 +74,9 @@ class Portfolio:
                 self.db.update_portfolio_holdings(self.portfolio.id, coin.id, quantity)
             else:
                 self.db.add_to_portfolio_holdings(self.portfolio.id, coin.id, quantity)
+            log_message = "Traded {0} coin in quantity of {1}"
+            logging.info(log_message.format(coin.name, quantity))
+            print(log_message.format(coin.name, quantity))
 
     def make_trade_decision(self) -> None:
         coins = self._get_top_coins()
@@ -82,3 +89,7 @@ class Portfolio:
                     self.make_trade(coin)
                 except InsufficientFundsError:
                     pass  # Try to trade the next coin on the list.
+        portfolio_pnl = self.db.get_portfolio_pnl(self.portfolio.id)
+        log_message = "At the end of this trading the PnL is: {0}."
+        logging.info(log_message.format(portfolio_pnl))
+        print(log_message.format(portfolio_pnl))
