@@ -89,7 +89,7 @@ class Portfolio:
                     self.make_trade(coin)
                 except InsufficientFundsError:
                     pass  # Try to trade the next coin on the list.
-        portfolio_pnl = self.db.get_portfolio_pnl(self.portfolio.id)
+        portfolio_pnl = round(self.db.get_portfolio_pnl(self.portfolio.id), 2)
         log_message = "At the end of this trading the PnL is: {0}."
         logging.info(log_message.format(portfolio_pnl))
         print(log_message.format(portfolio_pnl))
