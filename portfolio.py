@@ -4,6 +4,7 @@ from typing import List
 
 import crypto_api
 import database_api
+import datetime
 import logging
 
 
@@ -80,6 +81,10 @@ class Portfolio:
 
     def make_trade_decision(self) -> None:
         coins = self._get_top_coins()
+        logging.info("________________________")
+        logging.info("Starting trading.")
+
+        made_trades = False
 
         for coin in coins:
             coin_avg = self._get_coin_avg(coin.id)
@@ -87,9 +92,12 @@ class Portfolio:
             if self._should_trade(coin, coin_avg):
                 try:
                     self.make_trade(coin)
+                    made_trades = True
                 except InsufficientFundsError:
                     pass  # Try to trade the next coin on the list.
+        if not made_trades:
+            logging.info("Made no trades this trading round.")
         portfolio_pnl = round(self.db.get_portfolio_pnl(self.portfolio.id), 2)
-        log_message = "At the end of this trading the PnL is: {0}."
-        logging.info(log_message.format(portfolio_pnl))
-        print(log_message.format(portfolio_pnl))
+        log_message = "At the end of this trading round at {0}, the PnL is: {1}."
+        logging.info(log_message.format(datetime.datetime.now(), portfolio_pnl))
+        print(log_message.format(datetime.datetime.now(), portfolio_pnl))
