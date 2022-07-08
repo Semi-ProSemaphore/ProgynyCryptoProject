@@ -22,4 +22,4 @@ class App:
 
         while True:
             portfolio.make_trade_decision()
-            time.sleep(60)
+            time.sleep(3600)
