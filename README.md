@@ -16,9 +16,9 @@ Cryptocurrencies are on the rise, and we want to get in on the action. Let's bui
 
 ### Steps
 
-- Write an python application that will hit an API to get the top 3 cryptocurrency coins based on current market cap. (Please note the API call to get this data is in `crypto_api.py`). 
+- Write a python application that will hit an API to get the top 3 cryptocurrency coins based on current market cap. (Please note the API call to get this data is in `crypto_api.py`). 
 - Store these results in a database table. (Please design this table as well as inserting records into it. The primary fields to include are the symbol, name and current price, but feel free to include any other data you believe is relevant). Please utilize MySQL or a similar relational database. (A MySQL docker container has been provided but you are welcome to use a similar one if so desired)
-- Compare each coin and it's current price (in USD) against the average of the last 10 prices on a daily interval (Please note the API call to get this data is in `crypto_api.py`)
+- Compare each coin and its current price (in USD) against the average of the last 10 prices on a daily interval (Please note the API call to get this data is in `crypto_api.py`)
     - If the current price is lower than the average price, place an order for "1 coin" and assume it was filled at the current price. (Please use the fake function `submit_order` to mock this trade, there is no real network request to place a trade)
     - If the current price is equal to or higher than the average price, do nothing and move onto the next coin
 - Log the results of the trades (if any were made)
@@ -28,10 +28,10 @@ Cryptocurrencies are on the rise, and we want to get in on the action. Let's bui
 
 Be prepared to present your solutions and cover the following items:
 - Submit you code for review via a public repo on your GitHub account (If you would like to make it private let us know and we can provide usernames to add for read access)
-- Include some instructions on how to run it
 - A technical walkthrough of the code and how it works
 - Answer potential questions around design decisions
 - What you would improve - this can be both from a code perspective and a business logic perspective
+- Include some instructions on how to run it
 
 ### Important Notes
 
